@@ -189,7 +189,7 @@ OpenRouter decisions
 
 ## 验证
 
-离线测试（35 个用例，不联网）：
+离线测试（36 个用例，不联网）：
 
 ```powershell
 cd D:\whale\decision-model

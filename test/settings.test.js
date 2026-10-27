@@ -91,6 +91,16 @@ test('resolves the stored credential before the config fallback', async () => {
   assert.equal(await controller.resolveKey(), 'stored-key')
 })
 
+test('finds the credential service even when it mounts after apply', async () => {
+  const ctx = fakeCtx()
+  const controller = createSettingsController(ctx, cfg)
+  assert.equal(await controller.resolveKey(), '')
+  // Simulate the provider mounting after this plugin's apply.
+  const credentials = { async resolve() { return { value: 'late-key' } } }
+  ctx.get = (name) => name === 'credentials' ? credentials : undefined
+  assert.equal(await controller.resolveKey(), 'late-key')
+})
+
 test('migrates a legacy config key only when no credential is configured', async () => {
   const writes = []
   const credentials = {

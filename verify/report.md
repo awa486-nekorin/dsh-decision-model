@@ -261,7 +261,8 @@ cordis.patch.yml:18  masked=sk-or-v1-…7fa4
 | 明文 key 从仓库文件移除 | **PASS** | `cordis.patch.yml` 的 `apiKey` 已置空；全目录扫描 `sk-or-v1-…` 无命中 |
 | 凭据库迁移 | **PASS** | `%USERPROFILE%\.dsh\.credentials.yaml` 中存在 `OPENROUTER_DECISION_API_KEY` 引用；`cordis.patch.yml` 无 key 后真实 `decision` 调用成功，证明解析走凭据库 |
 | 未认证访问边界 | **PASS** | 未带浏览器凭据请求 `/api/decision-model/status` 返回 **401** |
-| 离线安全测试 | **PASS** | `35 tests / 35 pass / 0 fail`；`test/settings.test.js` 覆盖不返回密钥、错误脱敏、限流、路由注册、凭据优先级、旧配置迁移；`test/client.test.js` 验证 slot 注册与对象注入形状 |
+| 离线安全测试 | **PASS** | `36 tests / 36 pass / 0 fail`；`test/settings.test.js` 覆盖不返回密钥、错误脱敏、限流、路由注册、凭据优先级、旧配置迁移、凭据服务晚挂载；`test/client.test.js` 验证两个设置 slot 注册与对象注入形状 |
+| 实际 key 不生效排障 | **PASS** | OpenRouter `/api/v1/key`、`/api/v1/credits` 与 decisions 均验证该 key 有效（账户 $5 额度）；比对确认插件凭据库原先存的是另一把 key；写入后 `decision` 调用成功。同时修复了凭据服务晚挂载时被缓存为 `undefined` 的 bug |
 | Client 设置页实际注册 | **PASS** | boot graph 出现 `@local/decision-model`（`immediately: true`）；`settings.plugins.tab` 出现 `id: "decision-model"`、`order: 30`、`active: true` |
 | Desktop / Web 共享入口 | **PASS** | 同一 Client 半同时注册 `settings.section`（`id: "decision-model"`、`order: 45`、`active: true`）；Desktop App 与 Web GUI 使用同一 web client，因此两端都能从设置主侧栏直接打开 |
 | 已认证状态接口 | **PASS** | 从当前页面发起 `GET /api/decision-model/status` 返回 **200**：`configured: true, source: "stored", writable: true, ref: "OPENROUTER_DECISION_API_KEY"`，无 key 字段 |
