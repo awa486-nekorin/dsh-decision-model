@@ -3,7 +3,7 @@
 把 OpenRouter 的 **Alpha Decisions** 接口（`perplexity/pplx-decider-v1.2`）接进 DeepSeek Harness：
 DSH 在调度子代理时，可以直接（或自动）调用类 JEV 的决策模型，拿回概率化的裁决。
 
-这是一个 **Host + Client bundle**：Host 半负责工具、门禁与网络请求，Client 半在 Web 设置页提供 API Key 管理与连通性检测。没有构建步骤、没有第三方依赖。
+这是一个 **Host + Client bundle**：Host 半负责工具、门禁与网络请求，Client 半在设置页（Desktop App 与 Web GUI 共用）提供 API Key 管理与连通性检测。没有构建步骤、没有第三方依赖。
 
 ---
 
@@ -47,7 +47,7 @@ cordis_inspect_query({ platform: "host", provider: "Tool", method: "listTools" }
 
 ## 设置页（API Key 与连通性检测）
 
-打开 **设置 → 插件 → 决策模型 API**：
+打开 **设置 → 决策模型 API**（桌面 App 与 Web GUI 共用同一页面），也可以从 **设置 → 插件 → 决策模型 API** 进入：
 
 - **API Key** 输入框只用于写入，保存成功后立即清空；页面从不读取、回显或记录密钥明文。
 - 密钥写入 DSH 的凭据存储（`OPENROUTER_DECISION_API_KEY`），不再写进 `cordis.patch.yml`。
@@ -211,7 +211,7 @@ node scripts/live-smoke.mjs
 
 1. `cordis_inspect_query` → `Tool.listTools` 里出现 `decision`；
 2. 直接调用一次 `decision` 工具（见上）；
-3. 打开 Web 设置 → 插件 → 决策模型 API，确认状态显示「已配置」，并点一次「测试连接」；
+3. 打开 设置 → 决策模型 API（或 设置 → 插件 → 决策模型 API），确认状态显示「已配置」，并点一次「测试连接」；
 4. 触发一次 `subagent` / `spawn_teammate`，检查结果文本尾部是否带 `[decision-model]` 意见；
 5. 想看拦截效果：把 `mode` 改成 `enforce`，故意给一个信息不足的调度任务。
 

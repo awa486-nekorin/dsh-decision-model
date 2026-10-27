@@ -142,12 +142,20 @@ window.__ModuleLoader__.load({
       inject: ['slots', 'locale', 'remote', 'remote.credentials'],
       apply(ctx) {
         const t = ctx.locale.bind('settings.decisionModel')
+        const injected = () => ({ ctx, t })
         ctx.effect(() => ctx.locale.register('settings.decisionModel', DICT), 'decision-model: settings locale')
-        ctx.slots.inject('settings.plugins.tab', () => ctx.slots.register({
+        // Top-level Settings entry: visible in both the Desktop app and the Web GUI.
+        ctx.effect(() => ctx.slots.inject('settings.section', () => ctx.slots.register({
+          name: 'settings.section', id: 'decision-model', order: 45,
+          label: () => t('title'), locale: 'settings.decisionModel',
+          inject: injected,
+        }, SettingsPage)), 'decision-model: settings section')
+        // Also keep the Plugins-page entry for users who manage plugins there.
+        ctx.effect(() => ctx.slots.inject('settings.plugins.tab', () => ctx.slots.register({
           name: 'settings.plugins.tab', id: 'decision-model', order: 30,
           label: () => t('title'), locale: 'settings.decisionModel',
-          inject: () => ({ ctx, t }),
-        }, SettingsPage))
+          inject: injected,
+        }, SettingsPage)), 'decision-model: plugins tab')
       },
     }
   },
