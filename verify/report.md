@@ -254,15 +254,17 @@ cordis.patch.yml:18  masked=sk-or-v1-…7fa4
 
 ## 设置页与凭据迁移（2026-10-27，后续修订）
 
-本轮把 API Key 从 `cordis.patch.yml` 迁到 DSH 凭据库，并新增 Web 设置页。由于 DSH Host 的 ESM 模块在进程内按 URL 缓存，**已安装插件的 Host 代码更新需要重启 DSH 或重新安装到新路径才会生效**；本报告区分了已生效项与待重启项。
+本轮把 API Key 从 `cordis.patch.yml` 迁到 DSH 凭据库，并新增 Web 设置页。Host Client 模块图在启动时缓存“该包无 client 声明”的结果，普通 enable/disable 不会刷新；刷新页面或重启会重新扫描。为了即时验证，本轮用临时诊断 bundle 刷新缓存并完成了页面侧真实请求；诊断 bundle 已移除，未进入仓库。
 
 | 项目 | 结果 | 证据 / 限制 |
 |---|---|---|
 | 明文 key 从仓库文件移除 | **PASS** | `cordis.patch.yml` 的 `apiKey` 已置空；全目录扫描 `sk-or-v1-…` 无命中 |
 | 凭据库迁移 | **PASS** | `%USERPROFILE%\.dsh\.credentials.yaml` 中存在 `OPENROUTER_DECISION_API_KEY` 引用；`cordis.patch.yml` 无 key 后真实 `decision` 调用成功，证明解析走凭据库 |
-| 状态/测试路由鉴权 | **PASS（仅未认证边界）** | 未带浏览器凭据请求 `/api/decision-model/status` 返回 **401**；无法在不读取用户认证令牌的前提下完成已认证请求 |
+| 未认证访问边界 | **PASS** | 未带浏览器凭据请求 `/api/decision-model/status` 返回 **401** |
 | 离线安全测试 | **PASS** | `35 tests / 35 pass / 0 fail`；`test/settings.test.js` 覆盖不返回密钥、错误脱敏、限流、路由注册、凭据优先级、旧配置迁移；`test/client.test.js` 验证 slot 注册与对象注入形状 |
-| Client 设置页实际渲染 | **待重启后验证** | 当前页面仍运行旧 Client 模块图；`Slots.listSubTree` 的 `settings.plugins.tab` 暂只看到 `all`。Client 代码、manifest 与 package `files` 已就绪，刷新/重启后应出现 `decision-model` tab |
-| 真实“测试连接”按钮 | **待重启后验证** | Host 路由代码已写入，但运行中的旧模块仍使用缓存版本；未认证 401 已证明 `/api` 鉴权边界存在 |
+| Client 设置页实际注册 | **PASS** | boot graph 出现 `@local/decision-model`（`immediately: true`）；`Slots.listSubTree` 的 `settings.plugins.tab` 出现 `id: "decision-model"`、`order: 30`、`active: true` |
+| 已认证状态接口 | **PASS** | 从当前页面发起 `GET /api/decision-model/status` 返回 **200**：`configured: true, source: "stored", writable: true, ref: "OPENROUTER_DECISION_API_KEY"`，无 key 字段 |
+| 真实“测试连接”按钮 | **PASS** | 同一页面发起 `POST /api/decision-model/test` 返回 **200**：`ok: true`、模型 `perplexity/pplx-decider-v1.2-20261016`、延迟 2670ms、成本 $0.00000192；响应无 key、无上游 body |
+| 视觉渲染截图 | **未直接验证** | 当前环境没有浏览器控制能力；已确认 Client 半加载无崩溃、slot 注册 active，且真实页面请求链路可用。剩余仅为点开标签页的视觉确认 |
 
 **安全说明**：本地凭据文件仅当前 OS 用户可读，但 Agent 工具进程与用户同 UID，因此凭据库不能隔离 Agent 进程；它解决的是“明文不进 Git / 不进配置回显 / 不跨 wire 回传”，不是恶意同用户进程隔离。

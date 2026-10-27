@@ -215,6 +215,13 @@ node scripts/live-smoke.mjs
 4. 触发一次 `subagent` / `spawn_teammate`，检查结果文本尾部是否带 `[decision-model]` 意见；
 5. 想看拦截效果：把 `mode` 改成 `enforce`，故意给一个信息不足的调度任务。
 
+本次实际验证结果（2026-10-27，desktop profile）：
+
+- `settings.plugins.tab` 中 `decision-model` tab 已注册且 active；
+- 已认证 `GET /api/decision-model/status` → 200，`configured: true, source: "stored", writable: true`；
+- 已认证 `POST /api/decision-model/test` → 200，模型 `perplexity/pplx-decider-v1.2-20261016`，延迟 2670ms，成本 `$0.00000192`，响应不含 key；
+- 未认证访问同一路由 → 401。
+
 ## 排错
 
 - **工具没出现**：看 DSH 日志里 `[decision-model]` 行；若 `Config` 校验失败，行会被 loader 拒绝并报 `invalid config: $.<field>`。
