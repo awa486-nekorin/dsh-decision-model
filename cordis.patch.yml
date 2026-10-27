@@ -1,0 +1,37 @@
+# @local/decision-model —— JEV 类决策模型桥（Host-only bundle）
+#
+# 安装：plugin_manager install_bundle，target 用本目录的绝对路径。
+# 这里有全部可配置项；改完保存后会由 profile 的 patchReload: live 重新加载本行。
+# API Key 不写在这里：请在 设置 → 插件 → 决策模型 API 中保存（写入 DSH 凭据库）。
+#
+# 字段说明见 README.md：
+#   mode: off | advisory | enforce
+#     off      = 只注册 decision 工具，不自动介入调度
+#     advisory = 调度子代理前咨询决策模型，把意见追加到工具结果里（不拦截）
+#     enforce  = 咨询后按 threshold 拦截（低于阈值时拒绝本次调度）
+- insert:
+    - id: decision-model
+      name: '@local/decision-model'
+      config:
+        endpoint: https://openrouter.ai/api/alpha/decisions
+        model: perplexity/pplx-decider-v1.2
+        # 已弃用的兼容回退；请用 Web 设置页把 key 写入 DSH 凭据库。
+        apiKey: ""
+        apiKeyEnv: OPENROUTER_DECISION_API_KEY
+        timeoutMs: 20000
+        # 门禁等决策模型的超时；比 timeoutMs 短，避免一次调度被拖太久（超时按 fail-open 放行）
+        gateTimeoutMs: 10000
+        toolName: decision
+        mode: advisory
+        threshold: 0.5
+        onError: allow
+        promptSection: true
+        maxStateChars: 4000
+        gatedTools:
+          - subagent
+          - subagent_fork
+          - subagent_codex
+          - subagent_claude_code
+          - spawn_teammate
+          - ralph
+          - workflow

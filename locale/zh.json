@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "JEV 决策模型桥",
+    "description": "让 DSH 调用 JEV 类决策模型（perplexity/pplx-decider-v1.2）：提供 decision 工具，在调度子代理、Team 队友与 workflow 前自动做一次概率裁决，并在设置页安全管理 API Key、检测连通性。"
+  }
+}

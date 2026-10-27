@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "JEV Decision Bridge",
+    "description": "Consult a JEV-style decision model (perplexity/pplx-decider-v1.2) from DSH: a decision tool plus an automatic probabilistic gate before delegating to subagents, teammates, and workflows, with a settings page for secure API-key management and connectivity testing."
+  }
+}

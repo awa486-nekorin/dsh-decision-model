@@ -1,0 +1,62 @@
+{
+  "name": "@local/decision-model",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "JEV-style decision model bridge for DSH: a decision tool, an automatic pre-dispatch gate consulted before subagent delegation, and a secure settings page for API key management and connectivity testing.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awa486-nekorin/dsh-decision-model.git"
+  },
+  "homepage": "https://github.com/awa486-nekorin/dsh-decision-model#readme",
+  "bugs": {
+    "url": "https://github.com/awa486-nekorin/dsh-decision-model/issues"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "cordis.patch.yml",
+    "locale/en.json",
+    "locale/zh.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE",
+    "client.js"
+  ],
+  "engines": {
+    "node": ">=20.18"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "decision",
+    "subagent"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-api-remotes"
+      ]
+    }
+  }
+}
