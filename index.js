@@ -1,5 +1,5 @@
 /**
- * @local/decision-model —— JEV 类决策模型桥（Host-only bundle）
+ * @local/decision-model —— JEV 类决策模型桥（Host + Client bundle）
  * ============================================================================
  * 它把 OpenRouter 的「Alpha Decisions」接口（perplexity/pplx-decider-v1.2）
  * 接进 DSH，贡献三样东西：
